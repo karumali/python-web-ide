@@ -1,6 +1,6 @@
 # Python Web IDE - Python Code Editor in the Browser
 
-This is a web-based Python code editor that allows you to write, edit, and run Python code directly in your browser. It leverages [Pyodide](https://pyodide.org/) to execute Python code without any server-side processing. PyWeb supports multiple files, offline usage, and provides a familiar coding experience with the Monaco editor.
+This is a web-based Python code editor that allows you to write, edit, and run Python code directly in your browser. It leverages [Pyodide](https://pyodide.org/) to execute Python code without any server-side processing. It supports multiple files, offline usage, and provides a familiar coding experience with the Monaco editor.
 
 ## Features
 
