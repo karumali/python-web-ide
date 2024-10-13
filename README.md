@@ -1,46 +1,24 @@
-# Getting Started with Create React App
+# Python Web IDE - Python Code Editor in the Browser
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a web-based Python code editor that allows you to write, edit, and run Python code directly in your browser. It leverages [Pyodide](https://pyodide.org/) to execute Python code without any server-side processing. PyWeb supports multiple files, offline usage, and provides a familiar coding experience with the Monaco editor.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Write and Run Python Code**: Edit Python code and execute it instantly in the browser.
+- **Multiple File Support**: Create, edit, and manage multiple Python files within the editor.
+- **Monaco Editor Integration**: Experience a powerful code editor with syntax highlighting, code completion, and more.
+- **Offline Support**: Works offline after the initial load; all dependencies are stored locally.
+- **Local Storage Persistence**: Your code is saved in the browser's local storage and persists across sessions.
+- **VSCode-like Output Panel**: View the output of your code in a toggleable output panel, similar to VSCode.
+- **Keyboard Shortcuts**:
+  - **Run Code**: `Ctrl+R`
+  - **Toggle Output Panel**: `Ctrl+J` (Windows/Linux) or `Cmd+J` (Mac)
+- **File Management**: Add new files, close existing ones, and navigate between files with ease.
 
-### `npm start`
+## Demo
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Check out the live demo: [Live Demo](https://karumali.github.io/python-web-ide)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Screenshot
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+![Alt text](/screenshots/1.png)
