@@ -1,38 +1,122 @@
-.App {
+.tabs {
+  display: flex;
+  background-color: #1e1e1e;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.tabs button {
+  padding: 10px;
+  border: none;
+  background: none;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  border-bottom: 2px solid #007acc;
+  color: #fff;
+}
+
+.tabs button:hover {
+  color: #fff;
+}
+
+pre {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  padding: 10px;
+  overflow: auto;
+}
+
+.tab.active {
+  border-bottom: 2px solid #007acc;
+}
+
+.tab:hover {
+  background-color: #333;
+}
+
+.tab span {
+  color: #ccc;
+}
+
+.tab.active span {
+  color: #fff;
+}
+
+.close-button {
+  margin-left: 5px;
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #ff5c5c;
+}
+
+.loading-pyodide {
+  height: 100vh;
   text-align: center;
+  vertical-align: middle;
+  line-height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.output-panel {
+  position: fixed;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  overflow: auto;
+  border-top: 1px solid #333;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  bottom: 0px;
+  width: 100%;
+  height: 30vh;
 }
 
-.App-link {
-  color: #61dafb;
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #2d2d2d;
+  padding: 5px 10px;
+  border-bottom: 1px solid #333;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.output-header span {
+  color: #ccc;
+}
+
+.close-output-button {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.close-output-button:hover {
+  color: #ff5c5c;
+}
+
+.output-content {
+  margin: 0px;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.code-container {
+  flex-grow: 1;
+}
+
+.workspace {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
