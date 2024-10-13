@@ -11,7 +11,7 @@ type File = {
 const App: React.FC = () => {
   const [pyodide, setPyodide] = useState<Pyodide | null>(null);
   const [files, setFiles] = useState<File[]>([
-    { name: 'main.py', content: '' },
+    { name: 'main.py', content: 'print("Hello World!")' },
   ]);
   const [activeFileIndex, setActiveFileIndex] = useState<number>(parseInt(localStorage.getItem('activeFileIndex') || '0'));
   const [output, setOutput] = useState<string>('');
