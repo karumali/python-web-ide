@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/karumali/python-web-ide/static/css/main.77719c35.css",
+    "main.js": "/karumali/python-web-ide/static/js/main.5f8c9824.js",
+    "static/js/453.8f923066.chunk.js": "/karumali/python-web-ide/static/js/453.8f923066.chunk.js",
+    "index.html": "/karumali/python-web-ide/index.html",
+    "main.77719c35.css.map": "/karumali/python-web-ide/static/css/main.77719c35.css.map",
+    "main.5f8c9824.js.map": "/karumali/python-web-ide/static/js/main.5f8c9824.js.map",
+    "453.8f923066.chunk.js.map": "/karumali/python-web-ide/static/js/453.8f923066.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.77719c35.css",
+    "static/js/main.5f8c9824.js"
+  ]
+}
