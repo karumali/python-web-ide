@@ -26,6 +26,12 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (files[activeFileIndex]) {
+      document.title = files[activeFileIndex].name + " - Python Web IDE";
+    }
+  }, [files, activeFileIndex]);
+
+  useEffect(() => {
     localStorage['activeFileIndex'] = activeFileIndex;
   }, [activeFileIndex]);
 
