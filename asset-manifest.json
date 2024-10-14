@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/python-web-ide/static/css/main.b615d346.css",
-    "main.js": "/python-web-ide/static/js/main.37fda795.js",
-    "static/js/453.8f923066.chunk.js": "/python-web-ide/static/js/453.8f923066.chunk.js",
-    "index.html": "/python-web-ide/index.html",
-    "main.b615d346.css.map": "/python-web-ide/static/css/main.b615d346.css.map",
-    "main.37fda795.js.map": "/python-web-ide/static/js/main.37fda795.js.map",
-    "453.8f923066.chunk.js.map": "/python-web-ide/static/js/453.8f923066.chunk.js.map"
+    "main.css": "/static/css/main.b615d346.css",
+    "main.js": "/static/js/main.a6d71820.js",
+    "static/js/453.8f923066.chunk.js": "/static/js/453.8f923066.chunk.js",
+    "index.html": "/index.html",
+    "main.b615d346.css.map": "/static/css/main.b615d346.css.map",
+    "main.a6d71820.js.map": "/static/js/main.a6d71820.js.map",
+    "453.8f923066.chunk.js.map": "/static/js/453.8f923066.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b615d346.css",
-    "static/js/main.37fda795.js"
+    "static/js/main.a6d71820.js"
   ]
 }
