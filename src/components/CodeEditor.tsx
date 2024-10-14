@@ -16,6 +16,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange }) => {
       options={{
         fontSize: 20
       }}
+      loading="Loading Editor..."
     />
   );
 };

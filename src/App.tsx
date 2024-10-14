@@ -207,7 +207,7 @@ const App: React.FC = () => {
       {!pyodide && (
         <div className="loading-pyodide">
           <div className="spinner"></div>
-          <div className="loading-text">Initializing Pyodide...</div>
+          <div className="loading-text">Initializing Runtime...</div>
         </div>
       )}
 
