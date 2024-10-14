@@ -13,6 +13,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange }) => {
       value={code}
       onChange={onChange}
       theme="vs-dark"
+      options={{
+        fontSize: 20
+      }}
     />
   );
 };
