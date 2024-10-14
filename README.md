@@ -17,7 +17,7 @@ This is a web-based Python code editor that allows you to write, edit, and run P
 
 ## Demo
 
-Check out the live demo: [Live Demo](https://karumali.github.io/python-web-ide)
+Check out the live demo: [Live Demo](https://pywebide.com)
 
 ## Screenshot
 
