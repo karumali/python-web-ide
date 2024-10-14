@@ -143,9 +143,18 @@ const App: React.FC = () => {
           <div
             key={index}
             className={`tab ${activeFileIndex === index ? 'active' : ''}`}
+            onClick={() => setActiveFileIndex(index)}
+            onMouseDown={(e) => {
+              if (e.button === 1) { // Middle click
+                closeFile(index);
+              }
+            }}
           >
-            <span onClick={() => setActiveFileIndex(index)}>{file.name}</span>
-            <button className="close-button" onClick={() => closeFile(index)}>
+            <span>{file.name}</span>
+            <button className="close-button" onClick={(e) => {
+              closeFile(index);
+              e.stopPropagation();
+            }}>
               ×
             </button>
           </div>
