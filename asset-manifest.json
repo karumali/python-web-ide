@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/python-web-ide/static/css/main.b615d346.css",
-    "main.js": "/python-web-ide/static/js/main.b4f43c4b.js",
+    "main.js": "/python-web-ide/static/js/main.dda824d4.js",
     "static/js/453.8f923066.chunk.js": "/python-web-ide/static/js/453.8f923066.chunk.js",
     "index.html": "/python-web-ide/index.html",
     "main.b615d346.css.map": "/python-web-ide/static/css/main.b615d346.css.map",
-    "main.b4f43c4b.js.map": "/python-web-ide/static/js/main.b4f43c4b.js.map",
+    "main.dda824d4.js.map": "/python-web-ide/static/js/main.dda824d4.js.map",
     "453.8f923066.chunk.js.map": "/python-web-ide/static/js/453.8f923066.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b615d346.css",
-    "static/js/main.b4f43c4b.js"
+    "static/js/main.dda824d4.js"
   ]
 }
