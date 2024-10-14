@@ -204,7 +204,13 @@ const App: React.FC = () => {
           />
         </div>
       }
-      {!pyodide && <div className="loading-pyodide"> Initializing Pyodide... </div>}
+      {!pyodide && (
+        <div className="loading-pyodide">
+          <div className="spinner"></div>
+          <div className="loading-text">Initializing Pyodide...</div>
+        </div>
+      )}
+
 
       {isOutputVisible && (
         <div className="output-panel">
