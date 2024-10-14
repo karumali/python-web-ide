@@ -2,7 +2,7 @@
   "name": "python-editor",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://karuma.github.io",
+  "homepage": "https://karuma.github.io/",
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "@testing-library/jest-dom": "^5.17.0",
