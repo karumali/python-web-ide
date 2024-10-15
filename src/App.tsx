@@ -132,6 +132,10 @@ const App: React.FC = () => {
         e.preventDefault();
         newFile();
       }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsOutputVisible(false);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
