@@ -62,6 +62,8 @@ const App: React.FC = () => {
         import sys
         from io import StringIO
         sys.stdout = StringIO()
+        from js import prompt
+        __builtins__.input = prompt
       `);
 
       // Run the active file
