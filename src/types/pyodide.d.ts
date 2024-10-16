@@ -1,6 +1,15 @@
 declare global {
   interface Window {
-    loadPyodide: (config?: { indexURL: string }) => Promise<Pyodide>;
+    loadPyodide: (config?: {
+      indexURL: string;
+      stdin: () =>
+        | null
+        | undefined
+        | string
+        | ArrayBuffer
+        | Uint8Array
+        | number;
+    }) => Promise<Pyodide>;
     pyodide?: Pyodide;
   }
 }
