@@ -1,6 +1,7 @@
 import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import CodeEditor from './components/CodeEditor';
 import { auth, db, provider } from './firebaseConfig';
@@ -8,38 +9,58 @@ import { Pyodide } from './types/pyodide';
 
 
 type File = {
+  id: string;
   name: string;
   content: string;
 };
 
 const App: React.FC = () => {
-  const defaultFile = [
-    { name: 'main.py', content: 'print("Hello World!")' },
-  ]
+  const defaultFile: File = {
+    id: uuidv4(),
+    name: 'main.py',
+    content: 'print("Hello World!")',
+  };
+
   const [pyodide, setPyodide] = useState<Pyodide | null>(null);
-  const [files, setFiles] = useState<File[]>(defaultFile);
-  const [activeFileIndex, setActiveFileIndex] = useState<number>(parseInt(localStorage.getItem('activeFileIndex') || '0'));
+  const [files, setFilesState] = useState<File[]>([defaultFile]);
+  const [activeFileId, setActiveFileId] = useState<string>(
+    localStorage.getItem('activeFileId') || defaultFile.id
+  );
   const [output, setOutput] = useState<string>('');
   const [isOutputVisible, setIsOutputVisible] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
+  const setFiles = (files: File[]) => {
+    files = files.map(x => ({
+      ...x,
+      id: x.id ? x.id : uuidv4()
+    }))
+    setFilesState(files);
+  };
+
   useEffect(() => {
     const savedFiles = localStorage.getItem('files');
     if (savedFiles) {
-      const parsedFiles = JSON.parse(savedFiles);
+      let parsedFiles = JSON.parse(savedFiles) as File[];
+      parsedFiles = parsedFiles.map(x => ({
+        ...x,
+        id: x.id ? x.id : uuidv4()
+      }))
       setFiles(parsedFiles);
     }
   }, []);
 
   useEffect(() => {
-    if (files[activeFileIndex]) {
-      document.title = files[activeFileIndex].name + " - Python Web IDE";
+    const activeFile = files.find((file) => file.id === activeFileId);
+    if (activeFile) {
+      document.title = `${activeFile.name} - Python Web IDE`;
     }
-  }, [files, activeFileIndex]);
+  }, [files, activeFileId]);
 
   useEffect(() => {
-    localStorage['activeFileIndex'] = activeFileIndex;
-  }, [activeFileIndex]);
+    localStorage.setItem('activeFileId', activeFileId);
+  }, [activeFileId]);
+
 
   useEffect(() => {
     const loadPyodide = async () => {
@@ -73,10 +94,11 @@ const App: React.FC = () => {
         from js import prompt
         __builtins__.input = prompt
       `);
-
+      const activeFile = files.find((file) => file.id === activeFileId);
+      if (!activeFile) return;
       // Run the active file
       await pyodide.runPythonAsync(`
-        exec(open('${files[activeFileIndex].name}').read())
+        exec(open('${activeFile.name}').read())
       `);
 
       // Get stdout content
@@ -89,35 +111,34 @@ const App: React.FC = () => {
     }
   };
 
-
-  const closeFile = (index: number) => {
+  const closeFile = (id: string) => {
     if (files.length === 1) {
       alert('Cannot close the last remaining file.');
       return;
     }
 
-    const updatedFiles = files.filter((_, i) => i !== index);
+    const updatedFiles = files.filter((file) => file.id !== id);
 
-    // Update active file index
-    let newActiveFileIndex = activeFileIndex;
-
-    if (index === activeFileIndex) {
-      newActiveFileIndex = index > 0 ? index - 1 : 0;
-    } else if (index < activeFileIndex) {
-      newActiveFileIndex = activeFileIndex - 1;
+    if (id === activeFileId) {
+      setActiveFileId(updatedFiles[0].id);
     }
 
     setFiles(updatedFiles);
-    setActiveFileIndex(newActiveFileIndex);
     localStorage.setItem('files', JSON.stringify(updatedFiles));
+    saveUserData();
   };
 
   const newFile = () => {
     const name = prompt('Enter new file name');
     if (name) {
-      const updatedFiles = [...files, { name, content: '' }];
+      const newFile: File = {
+        id: uuidv4(),
+        name,
+        content: '',
+      };
+      const updatedFiles = [...files, newFile];
       setFiles(updatedFiles);
-      setActiveFileIndex(updatedFiles.length - 1);
+      setActiveFileId(newFile.id);
       localStorage.setItem('files', JSON.stringify(updatedFiles));
     }
   };
@@ -130,19 +151,22 @@ const App: React.FC = () => {
       const data = docSnap.data();
       if (data.files) {
         const cloudFiles = data.files as File[];
-        let newFiles = files.filter(x => x.name !== defaultFile[0].name || x.content !== defaultFile[0].content);
-        newFiles = [...newFiles];
-        cloudFiles.forEach(file => {
-          if (!newFiles.find(x => x.name === file.name && x.content === file.content)) {
-            newFiles.push(file);
-          }
+        const localFilesById = new Map(files.filter(x => x.id !== defaultFile.id || x.content !== defaultFile.content).map((file) => [file.id, file]));
+
+        const mergedFiles = cloudFiles.map((cloudFile) => {
+          const localFile = localFilesById.get(cloudFile.id);
+          return localFile
+            ? { ...localFile, ...cloudFile } // Use cloud version
+            : cloudFile; // New file from cloud
         });
-        setFiles(newFiles);
-        localStorage.setItem('files', JSON.stringify(newFiles));
-      }
-      if (data.activeFileIndex !== undefined) {
-        setActiveFileIndex(data.activeFileIndex);
-        localStorage.setItem('activeFileIndex', data.activeFileIndex.toString());
+
+        // Add any local files not present in cloud
+        cloudFiles.forEach((cloudFile) => localFilesById.delete(cloudFile.id));
+        const remainingLocalFiles = Array.from(localFilesById.values());
+        const allFiles = [...mergedFiles, ...remainingLocalFiles];
+
+        setFiles(allFiles);
+        localStorage.setItem('files', JSON.stringify(allFiles));
       }
     }
   };
@@ -155,7 +179,10 @@ const App: React.FC = () => {
       }
       if (e.ctrlKey && e.key >= '1' && e.key <= '9') {
         e.preventDefault();
-        setActiveFileIndex(parseInt(e.key) - 1);
+        const index = parseInt(e.key) - 1;
+        if (files[index]) {
+          setActiveFileId(files[index].id);
+        }
       }
       if (e.metaKey && e.key === 'j') {
         e.preventDefault();
@@ -173,7 +200,7 @@ const App: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [runCode]);
+  }, [runCode, files, activeFileId, isOutputVisible]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -198,31 +225,31 @@ const App: React.FC = () => {
   };
 
   const logout = async () => {
-    if (!window.confirm("Are you sure to logout?")) return;
+    if (!window.confirm('Are you sure you want to logout?')) return;
     try {
       await signOut(auth);
       setUser(null);
-      setFiles(defaultFile);
-      setActiveFileIndex(0);
+      setFiles([defaultFile]);
+      setActiveFileId(defaultFile.id);
       localStorage.removeItem('files');
-      localStorage.removeItem('activeFileIndex');
+      localStorage.removeItem('activeFileId');
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
 
-  const saveUserData = async () => {
+  const saveUserData = useCallback(async () => {
     if (user) {
       try {
         await setDoc(doc(db, 'users', user.uid), {
           files,
-          activeFileIndex,
+          activeFileId,
         });
       } catch (error) {
         console.error('Error saving data:', error);
       }
     }
-  };
+  }, [user, files, activeFileId]);
 
   const getInitials = (name: string): string => {
     const names = name.trim().split(' ');
@@ -254,6 +281,8 @@ const App: React.FC = () => {
     <path d="M12 12c2.7614 0 5 2.2386 5 5v1H7v-1c0-2.7614 2.2386-5 5-5zm0-2c-1.6569 0-3-1.3431-3-3s1.3431-3 3-3 3 1.3431 3 3-1.3431 3-3 3z" />
   </svg>;
 
+  const activeFile = files.find((file) => file.id === activeFileId);
+
   return (
     <div className="workspace">
       <div className="tabs">
@@ -261,20 +290,20 @@ const App: React.FC = () => {
           {files.map((file, index) => (
             <div
               key={index}
-              className={`tab ${activeFileIndex === index ? 'active' : ''}`}
+              className={`tab ${activeFileId === file.id ? 'active' : ''}`}
               onClick={() => {
-                setActiveFileIndex(index);
+                setActiveFileId(file.id);
                 saveUserData();
               }}
               onMouseDown={(e) => {
                 if (e.button === 1) { // Middle click
-                  closeFile(index);
+                  closeFile(file.id);
                 }
               }}
             >
               <span>{file.name}</span>
               <button className="close-button" onClick={(e) => {
-                closeFile(index);
+                closeFile(file.id);
                 e.stopPropagation();
               }}>
                 ×
@@ -331,10 +360,11 @@ const App: React.FC = () => {
       {pyodide &&
         <div className="code-container">
           <CodeEditor
-            code={files[activeFileIndex].content}
+            code={activeFile ? activeFile.content : ""}
             onChange={(value) => {
-              const updatedFiles = [...files];
-              updatedFiles[activeFileIndex].content = value || '';
+              const updatedFiles = files.map((file) =>
+                file.id === activeFileId ? { ...file, content: value || '' } : file
+              );
               setFiles(updatedFiles);
               localStorage.setItem('files', JSON.stringify(updatedFiles));
               saveUserData();
