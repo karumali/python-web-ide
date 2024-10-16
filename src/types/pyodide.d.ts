@@ -15,6 +15,7 @@ declare global {
 }
 
 export interface Pyodide {
+  loadPackage(packages: string[]): unknown;
   runPythonAsync: (code: string) => Promise<any>;
   FS: {
     writeFile: (path: string, data: string) => void;

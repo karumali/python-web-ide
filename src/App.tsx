@@ -50,7 +50,7 @@ const App: React.FC = () => {
       // const pyodide = await window.loadPyodide({
       //   indexURL: '/pyodide/',
       // });
-      await pyodide.loadPackage(["numpy", "matplotlib"]);
+      await pyodide.loadPackage(["numpy"]);
       setPyodide(pyodide);
     };
     loadPyodide();
