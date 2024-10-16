@@ -174,3 +174,44 @@ pre {
     transform: rotate(360deg);
   }
 }
+.avatar {
+  width: 27px;
+  height: 27px;
+  background-color: #007acc; /* Default color or use dynamic colors */
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 0.8rem;
+}
+
+.tabs .logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding-left: 0;
+}
+
+.tabs .login-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transform: translateY(9px);
+  padding-left: 2px;
+  padding-top: 0;
+}
+
+.logout-button .avatar span,
+.login-button .avatar span {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.logout-button .avatar span:hover,
+.logout-button .avatar span:hover {
+  color: #fff;
+}
