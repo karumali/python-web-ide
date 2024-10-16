@@ -257,29 +257,31 @@ const App: React.FC = () => {
   return (
     <div className="workspace">
       <div className="tabs">
-        {files.map((file, index) => (
-          <div
-            key={index}
-            className={`tab ${activeFileIndex === index ? 'active' : ''}`}
-            onClick={() => {
-              setActiveFileIndex(index);
-              saveUserData();
-            }}
-            onMouseDown={(e) => {
-              if (e.button === 1) { // Middle click
+        <div className="file-tabs">
+          {files.map((file, index) => (
+            <div
+              key={index}
+              className={`tab ${activeFileIndex === index ? 'active' : ''}`}
+              onClick={() => {
+                setActiveFileIndex(index);
+                saveUserData();
+              }}
+              onMouseDown={(e) => {
+                if (e.button === 1) { // Middle click
+                  closeFile(index);
+                }
+              }}
+            >
+              <span>{file.name}</span>
+              <button className="close-button" onClick={(e) => {
                 closeFile(index);
-              }
-            }}
-          >
-            <span>{file.name}</span>
-            <button className="close-button" onClick={(e) => {
-              closeFile(index);
-              e.stopPropagation();
-            }}>
-              ×
-            </button>
-          </div>
-        ))}
+                e.stopPropagation();
+              }}>
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
         <button
           title="New File (Ctrl+N)"
           onClick={newFile}
