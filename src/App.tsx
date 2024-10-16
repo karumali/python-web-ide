@@ -1,6 +1,6 @@
 import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
 import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import CodeEditor from './components/CodeEditor';
@@ -29,7 +29,6 @@ const App: React.FC = () => {
   const [output, setOutput] = useState<string>('');
   const [isOutputVisible, setIsOutputVisible] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const skipSaveRef = useRef(false);
 
   const setFiles = (files: File[]) => {
     files = files.map(x => ({
@@ -140,13 +139,13 @@ const App: React.FC = () => {
       const updatedFiles = [...files, newFile];
       setFiles(updatedFiles);
       setActiveFileId(newFile.id);
+      saveUserData(updatedFiles);
       localStorage.setItem('files', JSON.stringify(updatedFiles));
     }
   };
 
   const handleCloudUpdate = (cloudFiles: File[]) => {
-    skipSaveRef.current = true;
-    const localFilesById = new Map(files.filter(x => x.id !== defaultFile.id || x.content !== defaultFile.content).map((file) => [file.id, file]));
+    const localFilesById = new Map(files.filter(x => x.name !== defaultFile.name || x.content !== defaultFile.content).map((file) => [file.id, file]));
 
     const mergedFiles = cloudFiles.map((cloudFile) => {
       const localFile = localFilesById.get(cloudFile.id);
@@ -158,11 +157,13 @@ const App: React.FC = () => {
     // Add any local files not present in cloud
     cloudFiles.forEach((cloudFile) => localFilesById.delete(cloudFile.id));
     const remainingLocalFiles = Array.from(localFilesById.values());
-    const allFiles = [...mergedFiles, ...remainingLocalFiles];
+    let allFiles = [...mergedFiles, ...remainingLocalFiles];
+    if (allFiles.length === 0) {
+      allFiles = [defaultFile];
+    }
 
     setFiles(allFiles);
     localStorage.setItem('files', JSON.stringify(allFiles));
-    skipSaveRef.current = false;
   }
 
   const fetchUserData = async (uid: string) => {
