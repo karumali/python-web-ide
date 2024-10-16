@@ -1,6 +1,6 @@
 import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import React, { useCallback, useEffect, useState } from 'react';
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 import CodeEditor from './components/CodeEditor';
@@ -29,6 +29,7 @@ const App: React.FC = () => {
   const [output, setOutput] = useState<string>('');
   const [isOutputVisible, setIsOutputVisible] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const skipSaveRef = useRef(false);
 
   const setFiles = (files: File[]) => {
     files = files.map(x => ({
@@ -125,7 +126,7 @@ const App: React.FC = () => {
 
     setFiles(updatedFiles);
     localStorage.setItem('files', JSON.stringify(updatedFiles));
-    saveUserData();
+    saveUserData(updatedFiles);
   };
 
   const newFile = () => {
@@ -143,6 +144,27 @@ const App: React.FC = () => {
     }
   };
 
+  const handleCloudUpdate = (cloudFiles: File[]) => {
+    skipSaveRef.current = true;
+    const localFilesById = new Map(files.filter(x => x.id !== defaultFile.id || x.content !== defaultFile.content).map((file) => [file.id, file]));
+
+    const mergedFiles = cloudFiles.map((cloudFile) => {
+      const localFile = localFilesById.get(cloudFile.id);
+      return localFile
+        ? { ...localFile, ...cloudFile } // Use cloud version
+        : cloudFile; // New file from cloud
+    });
+
+    // Add any local files not present in cloud
+    cloudFiles.forEach((cloudFile) => localFilesById.delete(cloudFile.id));
+    const remainingLocalFiles = Array.from(localFilesById.values());
+    const allFiles = [...mergedFiles, ...remainingLocalFiles];
+
+    setFiles(allFiles);
+    localStorage.setItem('files', JSON.stringify(allFiles));
+    skipSaveRef.current = false;
+  }
+
   const fetchUserData = async (uid: string) => {
     const docRef = doc(db, 'users', uid);
     const docSnap = await getDoc(docRef);
@@ -151,22 +173,7 @@ const App: React.FC = () => {
       const data = docSnap.data();
       if (data.files) {
         const cloudFiles = data.files as File[];
-        const localFilesById = new Map(files.filter(x => x.id !== defaultFile.id || x.content !== defaultFile.content).map((file) => [file.id, file]));
-
-        const mergedFiles = cloudFiles.map((cloudFile) => {
-          const localFile = localFilesById.get(cloudFile.id);
-          return localFile
-            ? { ...localFile, ...cloudFile } // Use cloud version
-            : cloudFile; // New file from cloud
-        });
-
-        // Add any local files not present in cloud
-        cloudFiles.forEach((cloudFile) => localFilesById.delete(cloudFile.id));
-        const remainingLocalFiles = Array.from(localFilesById.values());
-        const allFiles = [...mergedFiles, ...remainingLocalFiles];
-
-        setFiles(allFiles);
-        localStorage.setItem('files', JSON.stringify(allFiles));
+        handleCloudUpdate(cloudFiles);
       }
     }
   };
@@ -216,6 +223,38 @@ const App: React.FC = () => {
     };
   }, [user]);
 
+  useEffect(() => {
+    let unsubscribe: () => void = () => { };
+
+    const initAuthListener = async () => {
+      onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+
+        if (currentUser) {
+          // Set up real-time listener
+          const docRef = doc(db, 'users', currentUser.uid);
+
+          unsubscribe = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              const cloudFiles = data.files as File[];
+              handleCloudUpdate(cloudFiles);
+            }
+          });
+        } else {
+          unsubscribe();
+        }
+      });
+    };
+
+    initAuthListener();
+
+    return () => {
+      // Clean up on component unmount
+      unsubscribe();
+    };
+  }, []);
+
   const login = async () => {
     try {
       await signInWithPopup(auth, provider);
@@ -238,7 +277,7 @@ const App: React.FC = () => {
     }
   };
 
-  const saveUserData = useCallback(async () => {
+  const saveUserData = useCallback(async (files: File[]) => {
     if (user) {
       try {
         await setDoc(doc(db, 'users', user.uid), {
@@ -293,7 +332,6 @@ const App: React.FC = () => {
               className={`tab ${activeFileId === file.id ? 'active' : ''}`}
               onClick={() => {
                 setActiveFileId(file.id);
-                saveUserData();
               }}
               onMouseDown={(e) => {
                 if (e.button === 1) { // Middle click
@@ -367,7 +405,7 @@ const App: React.FC = () => {
               );
               setFiles(updatedFiles);
               localStorage.setItem('files', JSON.stringify(updatedFiles));
-              saveUserData();
+              saveUserData(updatedFiles);
             }}
           />
         </div>
