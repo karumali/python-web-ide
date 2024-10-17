@@ -48,6 +48,7 @@ const App: React.FC = () => {
         ...x,
         id: x.id ? x.id : uuidv4()
       }))
+      parsedFiles.sort((a, b) => new Date(b.lastupdatedutc).getTime() - new Date(a.lastupdatedutc).getTime());
       setFiles(parsedFiles);
     }
   }, []);
@@ -191,6 +192,7 @@ const App: React.FC = () => {
       const data = docSnap.data();
       if (data.files) {
         const cloudFiles = data.files as File[];
+        cloudFiles.sort((a, b) => new Date(b.lastupdatedutc).getTime() - new Date(a.lastupdatedutc).getTime());
         handleCloudUpdate(cloudFiles);
       }
     }
