@@ -119,6 +119,8 @@ const App: React.FC = () => {
       alert('Cannot close the last remaining file.');
       return;
     }
+    const file = files.find(x => x.id === id);
+    if (!file || !confirm(`Are you sure to delete ${file.name} ?`)) return;
 
     const updatedFiles = files.filter((file) => file.id !== id);
 
