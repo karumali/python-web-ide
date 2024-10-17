@@ -12,6 +12,7 @@ type File = {
   id: string;
   name: string;
   content: string;
+  lastupdatedutc: string;
 };
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
     id: uuidv4(),
     name: 'main.py',
     content: 'print("Hello World!")',
+    lastupdatedutc: new Date().toISOString()
   };
 
   const [pyodide, setPyodide] = useState<Pyodide | null>(null);
@@ -135,6 +137,7 @@ const App: React.FC = () => {
         id: uuidv4(),
         name,
         content: '',
+        lastupdatedutc: new Date().toISOString()
       };
       const updatedFiles = [...files, newFile];
       setFiles(updatedFiles);
@@ -149,9 +152,23 @@ const App: React.FC = () => {
 
     const mergedFiles = cloudFiles.map((cloudFile) => {
       const localFile = localFilesById.get(cloudFile.id);
-      return localFile
-        ? { ...localFile, ...cloudFile } // Use cloud version
-        : cloudFile; // New file from cloud
+
+      if (localFile) {
+        // Both local and cloud versions exist
+        const localTimestamp = new Date(localFile.lastupdatedutc).getTime();
+        const cloudTimestamp = new Date(cloudFile.lastupdatedutc).getTime();
+
+        if (cloudTimestamp > localTimestamp) {
+          // Cloud version is newer
+          return cloudFile;
+        } else {
+          // Local version is newer or timestamps are equal
+          return localFile;
+        }
+      } else {
+        // New file from cloud
+        return cloudFile;
+      }
     });
 
     // Add any local files not present in cloud
@@ -402,7 +419,9 @@ const App: React.FC = () => {
             code={activeFile ? activeFile.content : ""}
             onChange={(value) => {
               const updatedFiles = files.map((file) =>
-                file.id === activeFileId ? { ...file, content: value || '' } : file
+                file.id === activeFileId
+                  ? { ...file, content: value ? value : "", lastupdatedutc: new Date().toISOString() }
+                  : file
               );
               setFiles(updatedFiles);
               localStorage.setItem('files', JSON.stringify(updatedFiles));
