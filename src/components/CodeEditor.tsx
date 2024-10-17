@@ -1,5 +1,6 @@
 import Editor from '@monaco-editor/react';
 import React from 'react';
+import { setTheme } from './Themes';
 
 type CodeEditorProps = {
   code: string;
@@ -9,10 +10,11 @@ type CodeEditorProps = {
 const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange }) => {
   return (
     <Editor
+      beforeMount={setTheme}
       defaultLanguage="python"
       value={code}
       onChange={onChange}
-      theme="vs-dark"
+      theme="github-dark"
       options={{
         fontSize: 20
       }}
