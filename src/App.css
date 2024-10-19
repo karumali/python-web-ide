@@ -227,3 +227,11 @@ pre {
 .tabs .file-tabs::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+.copy-button {
+  transform: translateY(2px);
+}
+
+.tabs button.copied {
+  color: #aaa;
+}

@@ -31,6 +31,7 @@ const App: React.FC = () => {
   const [output, setOutput] = useState<string>('');
   const [isOutputVisible, setIsOutputVisible] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const setFiles = (files: File[]) => {
     files = files.map(x => ({
@@ -344,6 +345,19 @@ const App: React.FC = () => {
 
   const activeFile = files.find((file) => file.id === activeFileId);
 
+  const copyToClipboard = () => {
+    if (activeFile) {
+      navigator.clipboard.writeText(activeFile.content).then(() => {
+        setIsCopied(true);
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+  };
+
   return (
     <div className="workspace">
       <div className="tabs">
@@ -385,7 +399,7 @@ const App: React.FC = () => {
         >
           ▶
         </button>
-        <a
+        {/* <a
           href="https://github.com/karumali/python-web-ide"
           target="_blank"
           rel="noopener noreferrer"
@@ -401,7 +415,17 @@ const App: React.FC = () => {
           >
             <path d="M12 0.297C5.372 0.297 0 5.669 0 12.297c0 5.303 3.438 9.8 8.207 11.387.6.11.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.389-1.333-1.759-1.333-1.759-1.089-.745.083-.729.083-.729 1.205.085 1.84 1.236 1.84 1.236 1.07 1.832 2.809 1.303 3.495.996.108-.775.42-1.303.762-1.603-2.665-.303-5.466-1.333-5.466-5.93 0-1.31.469-2.381 1.235-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.323 3.301 1.23a11.52 11.52 0 013.005-.404c1.02.005 2.045.138 3.005.404 2.29-1.553 3.295-1.23 3.295-1.23.655 1.653.244 2.874.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.806 5.624-5.479 5.921.431.372.815 1.103.815 2.222v3.293c0 .319.192.694.801.576C20.565 22.092 24 17.596 24 12.297 24 5.669 18.627 0.297 12 0.297z" />
           </svg>
-        </a>
+        </a> */}
+        <button
+          onClick={copyToClipboard}
+          className={`copy-button ${isCopied ? 'copied' : ''}`}
+          title="Copy code to clipboard"
+        >
+          <svg width="22px" height="22px" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 5.00005C7.01165 5.00082 6.49359 5.01338 6.09202 5.21799C5.71569 5.40973 5.40973 5.71569 5.21799 6.09202C5 6.51984 5 7.07989 5 8.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.07989 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V8.2C19 7.07989 19 6.51984 18.782 6.09202C18.5903 5.71569 18.2843 5.40973 17.908 5.21799C17.5064 5.01338 16.9884 5.00082 16 5.00005M8 5.00005V7H16V5.00005M8 5.00005V4.70711C8 4.25435 8.17986 3.82014 8.5 3.5C8.82014 3.17986 9.25435 3 9.70711 3H14.2929C14.7456 3 15.1799 3.17986 15.5 3.5C15.8201 3.82014 16 4.25435 16 4.70711V5.00005"
+            stroke="#000000" stroke-width="0" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
         {user ? (
           <button className="logout-button" onClick={logout} title="Logout">
             <div
