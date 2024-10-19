@@ -231,7 +231,3 @@ pre {
 .copy-button {
   transform: translateY(2px);
 }
-
-.tabs button.copied {
-  color: #aaa;
-}
