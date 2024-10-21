@@ -498,6 +498,9 @@ const App: React.FC = () => {
             Vim Mode
             <Switch checked={isVimMode} />
           </MenuItem>
+          <MenuItem onClick={() => window.open('https://github.com/karumali/python-web-ide', '_blank')}>
+            About this project
+          </MenuItem>
         </Menu>
       </div>
       {pyodide &&
