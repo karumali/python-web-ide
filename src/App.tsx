@@ -35,7 +35,7 @@ const App: React.FC = () => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isVimMode, setIsVimMode] = useState<boolean>(localStorage.getItem('isVimMode') === 'true');
-
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(localStorage.getItem('isDarkMode') === 'true');
   const setFiles = (files: File[]) => {
     files = files.map(x => ({
       ...x,
@@ -87,6 +87,10 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('isVimMode', isVimMode.toString());
   }, [isVimMode]);
+
+  useEffect(() => {
+    localStorage.setItem('isDarkMode', isDarkMode.toString());
+  }, [isDarkMode]);
 
   const runCode = async () => {
     if (!pyodide) return;
@@ -376,10 +380,11 @@ const App: React.FC = () => {
 
   const userMenuOpen = Boolean(userMenuAnchorEl);
 
-  const getEditor = (isVimMode: boolean) => {
+  const getEditor = useCallback((isVimMode: boolean) => {
     return <CodeEditor
       code={activeFile ? activeFile.content : ""}
       isVimMode={isVimMode}
+      isDarkMode={isDarkMode}
       onChange={(value) => {
         const updatedFiles = files.map((file) =>
           file.id === activeFileId
@@ -391,10 +396,11 @@ const App: React.FC = () => {
         saveUserData(updatedFiles);
       }}
     />
-  }
+  }, [activeFileId, files, saveUserData, isDarkMode]);
+
 
   return (
-    <div className="workspace">
+    <div className={`workspace ${isDarkMode ? '' : 'light'}`}>
       <div className="tabs">
         <div className="file-tabs">
           {files.map((file, index) => (
@@ -484,6 +490,17 @@ const App: React.FC = () => {
             'aria-labelledby': 'basic-button',
           }}
         >
+          <MenuItem onClick={() => setIsVimMode(!isVimMode)}>
+            Vim Mode
+            <Switch checked={isVimMode} />
+          </MenuItem>
+          <MenuItem onClick={() => setIsDarkMode(!isDarkMode)}>
+            Dark Mode
+            <Switch checked={isDarkMode} />
+          </MenuItem>
+          <MenuItem onClick={() => window.open('https://github.com/karumali/python-web-ide', '_blank')}>
+            About this project
+          </MenuItem>
           {
             user && <MenuItem onClick={logout}>
               Logout
@@ -494,13 +511,6 @@ const App: React.FC = () => {
               Login
             </MenuItem>
           }
-          <MenuItem onClick={() => setIsVimMode(!isVimMode)}>
-            Vim Mode
-            <Switch checked={isVimMode} />
-          </MenuItem>
-          <MenuItem onClick={() => window.open('https://github.com/karumali/python-web-ide', '_blank')}>
-            About this project
-          </MenuItem>
         </Menu>
       </div>
       {pyodide &&

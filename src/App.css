@@ -80,6 +80,11 @@ pre {
   height: 30vh;
 }
 
+.workspace.light .output-panel {
+  background-color: #fff;
+  color: #000;
+}
+
 .output-header {
   display: flex;
   justify-content: space-between;
@@ -88,8 +93,17 @@ pre {
   border-bottom: 1px solid #333;
 }
 
+.workspace.light .output-header {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
 .output-header span {
   color: #ccc;
+}
+
+.workspace.light .output-header span {
+  color: #000;
 }
 
 .close-output-button {
@@ -99,7 +113,15 @@ pre {
   cursor: pointer;
 }
 
+.workspace.light .close-output-button {
+  color: #000;
+}
+
 .close-output-button:hover {
+  color: #ff5c5c;
+}
+
+.workspace.light .close-output-button:hover {
   color: #ff5c5c;
 }
 
@@ -107,6 +129,11 @@ pre {
   margin: 0px;
   flex-grow: 1;
   overflow: auto;
+}
+
+.workspace.light .output-content {
+  background-color: #fff;
+  color: #000;
 }
 
 .code-container {
@@ -152,6 +179,11 @@ pre {
   background-color: #1e1e1e;
   /* Matching the editor's background */
   color: #ccc;
+}
+
+.workspace.light .loading-pyodide {
+  background-color: #fff;
+  color: #000;
 }
 
 .spinner {

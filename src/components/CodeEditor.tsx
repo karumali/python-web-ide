@@ -6,9 +6,10 @@ type CodeEditorProps = {
   code: string;
   onChange: (value: string | undefined) => void;
   isVimMode: boolean;
+  isDarkMode: boolean;
 };
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isVimMode }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isVimMode, isDarkMode }) => {
   const [monacoVim, setMonacoVim] = useState<any>(undefined);
   const [monacoVimEditor, setMonacoVimEditor] = useState<any>(undefined);
   const handleEditorDidMount = (editor: any, monaco: any) => {
@@ -32,7 +33,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isVimMode }) =>
       defaultLanguage="python"
       value={code}
       onChange={onChange}
-      theme="github-dark"
+      theme={isDarkMode ? "github-dark" : "github-light"}
       options={{
         fontSize: 20
       }}
