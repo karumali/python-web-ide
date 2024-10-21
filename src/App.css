@@ -147,19 +147,24 @@ pre {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* Full viewport height */
-  background-color: #1e1e1e; /* Matching the editor's background */
+  height: 100vh;
+  /* Full viewport height */
+  background-color: #1e1e1e;
+  /* Matching the editor's background */
   color: #ccc;
 }
 
 .spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid #ccc; /* Light grey */
-  border-top: 5px solid #ea4a5a; /* Red */
+  border: 5px solid #ccc;
+  /* Light grey */
+  border-top: 5px solid #ea4a5a;
+  /* Red */
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 20px; /* Space between spinner and text */
+  margin-bottom: 20px;
+  /* Space between spinner and text */
 }
 
 .loading-text {
@@ -170,14 +175,17 @@ pre {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
+
 .avatar {
   width: 27px;
   height: 27px;
-  background-color: #ea4a5a; /* Default color or use dynamic colors */
+  background-color: #ea4a5a;
+  /* Default color or use dynamic colors */
   color: #fff;
   border-radius: 50%;
   display: flex;
@@ -193,15 +201,15 @@ pre {
   background: none;
   border: none;
   cursor: pointer;
-  padding-left: 0;
+  transform: translateX(-10px) translateY(6px);
+  padding-top: 0;
 }
 
 .tabs .login-button {
   background: none;
   border: none;
   cursor: pointer;
-  transform: translateY(9px);
-  padding-left: 2px;
+  transform: translateX(-10px) translateY(6px);
   padding-top: 0;
 }
 
@@ -220,12 +228,15 @@ pre {
   display: flex;
   max-width: 80vw;
   overflow-y: auto;
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .tabs .file-tabs::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none;
+  /* Safari and Chrome */
 }
 
 .copy-button {
