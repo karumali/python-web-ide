@@ -6,7 +6,7 @@ import './App.css';
 import CodeEditor from './components/CodeEditor';
 import { auth, db, provider } from './firebaseConfig';
 import { Pyodide } from './types/pyodide';
-import { Button, Menu, MenuItem } from '@mui/material';
+import { Button, Menu, MenuItem, Switch } from '@mui/material';
 
 
 type File = {
@@ -34,6 +34,7 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [isVimMode, setIsVimMode] = useState<boolean>(localStorage.getItem('isVimMode') === 'true');
 
   const setFiles = (files: File[]) => {
     files = files.map(x => ({
@@ -82,6 +83,10 @@ const App: React.FC = () => {
     };
     loadPyodide();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('isVimMode', isVimMode.toString());
+  }, [isVimMode]);
 
   const runCode = async () => {
     if (!pyodide) return;
@@ -371,6 +376,23 @@ const App: React.FC = () => {
 
   const userMenuOpen = Boolean(userMenuAnchorEl);
 
+  const getEditor = (isVimMode: boolean) => {
+    return <CodeEditor
+      code={activeFile ? activeFile.content : ""}
+      isVimMode={isVimMode}
+      onChange={(value) => {
+        const updatedFiles = files.map((file) =>
+          file.id === activeFileId
+            ? { ...file, content: value ? value : "", lastupdatedutc: new Date().toISOString() }
+            : file
+        );
+        setFiles(updatedFiles);
+        localStorage.setItem('files', JSON.stringify(updatedFiles));
+        saveUserData(updatedFiles);
+      }}
+    />
+  }
+
   return (
     <div className="workspace">
       <div className="tabs">
@@ -440,7 +462,7 @@ const App: React.FC = () => {
           </svg>
         </button>
         {user ? (
-          <Button className="logout-button" onClick={handleUserMenuOpen} title="User Menu">
+          <Button className="logout-button" onClick={handleUserMenuOpen}>
             <div
               className="avatar"
               style={{ backgroundColor: getAvatarColor(user.displayName || user.email || 'User') }}
@@ -449,7 +471,7 @@ const App: React.FC = () => {
             </div>
           </Button>
         ) : (
-          <Button className="login-button" onClick={handleUserMenuOpen} title="Login">
+          <Button className="login-button" onClick={handleUserMenuOpen}>
             {defaultUserIcon}
           </Button>
         )}
@@ -463,28 +485,25 @@ const App: React.FC = () => {
           }}
         >
           {
-            user && <MenuItem onClick={logout}>Logout</MenuItem>
+            user && <MenuItem onClick={logout}>
+              Logout
+            </MenuItem>
           }
           {
-            !user && <MenuItem onClick={login}>Login</MenuItem>
+            !user && <MenuItem onClick={login}>
+              Login
+            </MenuItem>
           }
+          <MenuItem onClick={() => setIsVimMode(!isVimMode)}>
+            Vim Mode
+            <Switch checked={isVimMode} />
+          </MenuItem>
         </Menu>
       </div>
       {pyodide &&
         <div className="code-container">
-          <CodeEditor
-            code={activeFile ? activeFile.content : ""}
-            onChange={(value) => {
-              const updatedFiles = files.map((file) =>
-                file.id === activeFileId
-                  ? { ...file, content: value ? value : "", lastupdatedutc: new Date().toISOString() }
-                  : file
-              );
-              setFiles(updatedFiles);
-              localStorage.setItem('files', JSON.stringify(updatedFiles));
-              saveUserData(updatedFiles);
-            }}
-          />
+          {isVimMode && getEditor(true)}
+          {!isVimMode && getEditor(false)}
         </div>
       }
       {!pyodide && (
