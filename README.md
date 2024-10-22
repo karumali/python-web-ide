@@ -15,6 +15,14 @@ This is a web-based Python code editor that allows you to write, edit, and run P
   - **Toggle Output Panel**: `Ctrl+J` (Windows/Linux) or `Cmd+J` (Mac)
 - **File Management**: Add new files, close existing ones, and navigate between files with ease.
 
+## Testing
+
+This project uses [Playwright](https://playwright.dev/) for testing. To run the tests, use the following command:
+
+```bash
+npm test
+```
+
 ## Demo
 
 Check out the live demo: [Live Demo](https://pywebide.com)
