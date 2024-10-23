@@ -405,6 +405,10 @@ const App: React.FC = () => {
     />
   }, [activeFileId, files, saveUserData, isDarkMode, fontSize]);
 
+  useEffect(() => {
+    localStorage.setItem('fontSize', fontSize.toString());
+  }, [fontSize]);
+
   return (
     <ThemeProvider theme={theme}>
       <div className={`workspace ${isDarkMode ? '' : 'light'}`}>
