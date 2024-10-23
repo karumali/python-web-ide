@@ -37,6 +37,7 @@ const App: React.FC = () => {
   const [isVimMode, setIsVimMode] = useState<boolean>(localStorage.getItem('isVimMode') === 'true');
   const [isDarkMode, setIsDarkMode] = useState<boolean>(localStorage.getItem('isDarkMode') === 'true');
   const [fontSize, setFontSize] = useState<number>(localStorage.getItem('fontSize') ? parseInt(localStorage.getItem('fontSize')!) : 14);
+  const [useCopilot, setUseCopilot] = useState<boolean>(localStorage.getItem('useCopilot') === 'true');
   const theme = createTheme({
     palette: {
       mode: isDarkMode ? 'dark' : 'light',
@@ -97,6 +98,10 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('isDarkMode', isDarkMode.toString());
   }, [isDarkMode]);
+
+  useEffect(() => {
+    localStorage.setItem('useCopilot', useCopilot.toString());
+  }, [useCopilot]);
 
   const runCode = async () => {
     if (!pyodide) return;
@@ -386,12 +391,15 @@ const App: React.FC = () => {
 
   const userMenuOpen = Boolean(userMenuAnchorEl);
 
-  const getEditor = useCallback((isVimMode: boolean) => {
+  const getEditor = useCallback((isVimMode: boolean, useCopilot: boolean) => {
+    const activeFile = files.find((file) => file.id === activeFileId);
     return <CodeEditor
       code={activeFile ? activeFile.content : ""}
       isVimMode={isVimMode}
       isDarkMode={isDarkMode}
       fontSize={fontSize}
+      useCopilot={useCopilot}
+      filename={activeFile ? activeFile.name : ""}
       onChange={(value) => {
         const updatedFiles = files.map((file) =>
           file.id === activeFileId
@@ -511,6 +519,10 @@ const App: React.FC = () => {
               Dark Mode
               <Switch checked={isDarkMode} />
             </MenuItem>
+            <MenuItem onClick={() => setUseCopilot(!useCopilot)}>
+              Copilot
+              <Switch checked={useCopilot} />
+            </MenuItem>
             <MenuItem style={{ display: 'contents' }}>
               <Button onClick={() => setFontSize(fontSize - 1)}>-</Button>
               Font Size
@@ -535,8 +547,10 @@ const App: React.FC = () => {
         </div>
         {pyodide &&
           <div className="code-container">
-            {isVimMode && getEditor(true)}
-            {!isVimMode && getEditor(false)}
+            {isVimMode && useCopilot && getEditor(true, true)}
+            {isVimMode && !useCopilot && getEditor(true, false)}
+            {!isVimMode && useCopilot && getEditor(false, true)}
+            {!isVimMode && !useCopilot && getEditor(false, false)}
           </div>
         }
         {!pyodide && (
