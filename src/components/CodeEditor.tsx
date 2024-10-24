@@ -45,7 +45,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isVimMode, isDa
     }
   };
   useEffect(() => {
-    if (monaco && editor) {
+    if (monaco && editor && useCopilot) {
       registerCompletion(monaco, editor, {
         filename: filename,
         endpoint: COMPLETION_ENDPOINT,
