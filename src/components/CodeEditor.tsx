@@ -53,7 +53,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isVimMode, isDa
         maxContextLines: 60,
       });
     }
-  }, [filename]);
+  }, [filename, useCopilot]);
   return (
     <Editor
       beforeMount={setTheme}
