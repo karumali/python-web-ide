@@ -62,7 +62,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange, isVimMode, isDa
       onChange={onChange}
       theme={isDarkMode ? "github-dark" : "github-light"}
       options={{
-        fontSize: fontSize
+        fontSize: fontSize,
+        minimap: {
+          autohide: true
+        }
       }}
       loading="Loading Editor..."
       onMount={handleEditorDidMount}
